@@ -4,7 +4,7 @@ This project is the 3rd and final project for the MWS Nanodegree from Udacity.
 You can find the course here: [MWS Nanodegree](https://in.udacity.com/course/mobile-web-specialist-nanodegree--nd024)
 
 
-## Rubric
+## Rubrics
 
 ### Functionality
 
