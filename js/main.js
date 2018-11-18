@@ -140,6 +140,17 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+function fav_triggered(event) {
+    let star_btn = document.getElementById(event.explicitOriginalTarget.id);
+    if (star_btn.classList.contains('star--not-clicked')) {
+      star_btn.classList.remove('star--not-clicked');
+      star_btn.classList.add('star--clicked');
+    } else {
+      star_btn.classList.remove('star--clicked');
+      star_btn.classList.add('star--not-clicked');
+    }
+}
+
 /**
  * Create restaurant HTML.
  */
@@ -163,6 +174,15 @@ createRestaurantHTML = (restaurant) => {
     name.setAttribute('aria-label', restaurant.name);
     name.innerHTML = restaurant.name;
     li.append(name);
+
+    const fav_icon = document.createElement('span');
+    fav_icon.classList.add('fa');
+    fav_icon.classList.add('fa-star');
+    fav_icon.classList.add('star--not-clicked');
+    fav_icon.setAttribute('id', 'id--star-'+restaurant.id.toString());
+    fav_icon.onclick = fav_triggered;
+    li.append(fav_icon);
+
 
     const neighborhood = document.createElement('p');
     neighborhood.setAttribute('tabindex', 0);
