@@ -200,7 +200,6 @@ createReviewHTML = (review) => {
     const comments = document.createElement('p');
     name.setAttribute('tabindex', 0);
     comments.innerHTML = review.comments;
-    comments.setAttribute('aria-labelledby', review.comments);
     li.appendChild(comments);
 
     return li;
