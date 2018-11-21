@@ -35,6 +35,24 @@ initMap = () => {
   });
 }
 
+document.getElementById('btn--submit-review').addEventListener('click', () => {
+  let user_review = document.getElementById('id--user-review').value;
+  let curr_url = window.location.href;
+  let id = parseInt(curr_url[curr_url.length - 1]);
+  let rating = parseInt(document.getElementById('id--user-rating').value);
+  let user_name = document.getElementById('id--user-name').value;
+
+  let review = {
+    "restaurant_id": id,
+    "name": user_name,
+    "createdAt": new Date().getTime(),
+    "updatedAt": new Date().getTime(),
+    "comments": user_review
+  }
+
+  DBHelper.putReviewsInDb(review);
+});
+
 /**
  * Get current restaurant from page URL.
  */
@@ -88,7 +106,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
     }
     // fill reviews
-    fillReviewsHTML();
+    fillReviewsHTML(self.restaurant.id);
 }
 
 /**
@@ -117,7 +135,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (id) => {
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h2');
     title.setAttribute('tabindex', 0);
@@ -125,17 +143,22 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     title.innerHTML = 'Reviews';
     container.appendChild(title);
 
-    if (!reviews) {
-        const noReviews = document.createElement('p');
-        noReviews.innerHTML = 'No reviews yet!';
-        container.appendChild(noReviews);
-        return;
-    }
-    const ul = document.getElementById('reviews-list');
-    reviews.forEach(review => {
-        ul.appendChild(createReviewHTML(review));
-    });
-    container.appendChild(ul);
+    DBHelper.fetchReviewsByRestaurantId(id)
+      .then(reviews => {
+        if (!reviews || reviews.length == 0) {
+          const noReviews = document.createElement('p');
+          container.appendChild(noReviews);
+          return;
+        }
+        const ul = document.getElementById('reviews-list');
+        reviews.forEach(review => {
+            ul.appendChild(createReviewHTML(review));
+        });
+        container.appendChild(ul);
+      }).catch(error => {
+          console.log(error)
+      });
+
 }
 
 /**
@@ -162,11 +185,13 @@ createReviewHTML = (review) => {
     rating.setAttribute('aria-label', review.rating);
     li.appendChild(rating);
 
+    /*
     const date = document.createElement('small');
     name.setAttribute('tabindex', 0);
     date.innerHTML = review.date;
     date.setAttribute('aria-label', 'Reviewed on ' + review.date);
     li.appendChild(date);
+    */
 
     const hr = document.createElement('hr');
     hr.className = 'hr--seperator';

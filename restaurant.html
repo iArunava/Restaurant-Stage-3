@@ -59,7 +59,16 @@
     <!-- End reviews -->
     <section id='id--review-form'> 
         <h2> Your Review: </h2>
-        <input id="id--user-review" type="text" name="review" value="Write your review here">
+        <select id='id--user-rating'>
+          <option value='1'> 1 </option>
+          <option value='2'> 2 </option>
+          <option value='3'> 3 </option>
+          <option value='4'> 4 </option>
+          <option value='5'> 5 </option>
+        </select>
+        <input id="id--user-name" type="text" name="review" placeholder="Name">
+        <br/> <br/> <br/> <br/>
+        <input id="id--user-review" type="text" name="review" placeholder="Write your review here">
         <button id='btn--submit-review'> Submit </button>
     </section>
   </main>
