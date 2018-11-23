@@ -4,6 +4,10 @@ let restaurants,
 var newMap
 var markers = []
 
+let isChrome = !!window.chrome && !!window.chrome.webstore;
+var isFirefox = typeof InstallTrigger !== 'undefined';
+
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -141,7 +145,12 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 }
 
 function fav_triggered(event) {
-    let star_btn = document.getElementById(event.explicitOriginalTarget.id);
+    let star_btn;
+    if (isFirefox)
+      star_btn = document.getElementById(event.explicitOriginalTarget.id);
+    else
+      star_btn = document.getElementById(event.path[0].id);
+
     if (star_btn.classList.contains('star--not-clicked')) {
       star_btn.classList.remove('star--not-clicked');
       star_btn.classList.add('star--clicked');
