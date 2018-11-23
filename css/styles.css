@@ -21,27 +21,7 @@ a:hover, a:visited {
   color: #fcfcfc33;
   max-width: 95%; }
 
-  .star--clicked {
-    color: #ffa500;
-  }
-
-  .star--not-clicked {
-    color: #777;
-  }
-
-  #id--user-rating, #id--user-name {
-    float: left;
-    background-color: #fff;
-    border-radius: 30px 0px 30px 30px;
-    -webkit-box-shadow: 1em 1em 2.5em 0em #777;
-        box-shadow: 1em 1em 2.5em 0em #777;
-    padding: 30px 20px 30px;
-    border: 2px solid #FFB74D;
-  }
-
-/* ----------------------------- */
-/* ----------------------------- */
-
+/* ----------- */
 ul, li {
   color: #333;
   margin: 0px; }
@@ -338,13 +318,12 @@ nav h1 a {
 #reviews-container {
   padding: 30px 40px 80px; }
 
-#reviews-container h2, #id--review-form h2 {
+#reviews-container h2 {
   color: #f58500;
   font-size: 24pt;
   font-weight: 300;
   letter-spacing: -1px;
-  padding-bottom: 1pt;
-  text-shadow: 12px 10px 12px #777; }
+  padding-bottom: 1pt; }
 
 #reviews-list {
   margin: 0;
@@ -394,40 +373,11 @@ nav h1 a {
       -ms-flex-pack: justify;
           justify-content: space-between; }
 
+#reviews-container h2 {
+  text-shadow: 12px 10px 12px #777; }
+
 .reviewer-name {
   color: #FF9100; }
-
-#id--review-form {
-  padding: 30px 40px 80px;
-}
-
-#id--review-form h2 {
-  align-content: center;
-}
-
-#id--user-review {
-  min-width: 100%;
-  background-color: #fff;
-  border-radius: 30px 0px 30px 30px;
-  -webkit-box-shadow: 1em 1em 2.5em 0em #777;
-          box-shadow: 1em 1em 2.5em 0em #777;
-  padding: 30px 20px 30px;
-  border: 2px solid #FFB74D;
-}
-
-#btn--submit-review {
-  background-color: orange;
-  border-bottom: 3px solid #eee;
-  color: #fff;
-  margin: 15px 0 0;
-  padding: 8px 30px 10px;
-  text-align: center;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-size: .9em;
-  border-radius: 30px 0px 30px 30px;
-  border: 2px solid #FFB74D; 
-}
 
 @media only screen and (max-width: 875px) {
   .inside #map-container {
@@ -487,16 +437,6 @@ nav h1 a {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center; }
-
-  #id--review-form {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    min-width: 100%;
-  }
-
   #reviews-list li {
     min-width: 100%; }
   .inside #footer {
