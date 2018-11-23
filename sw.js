@@ -1,8 +1,12 @@
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
-        caches.open('restaurant-cache-v2').then((cache) => {
+        caches.open('restaurant-cache-v4').then((cache) => {
             return cache.addAll([
                 '/',
+                'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
+                'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
+                'manifest.json',
                 '/restaurant.html',
                 '/restaurant.html?id=1',
                 '/restaurant.html?id=2',
@@ -31,22 +35,30 @@ self.addEventListener('install', (event) => {
                 'img/9.jpg',
                 'img/10.jpg',
                 'icons/diet-128.png',
-                'https://fonts.gstatic.com/s/quicksand/v7/6xKtdSZaM9iE8KbpRA_hK1QN.woff2'
+                //'https://fonts.gstatic.com/s/quicksand/v7/6xKtdSZaM9iE8KbpRA_hK1QN.woff2',
+                'https://fonts.googleapis.com/css?family=Quicksand:300'
             ]);
+        }).catch(() => {
+            console.log('Error while caching!');
         })
     );
 });
 
 
 self.addEventListener('fetch', (event) => {
+    //console.log(event);
     let reg = new RegExp('(.*)?=(\\d*)');
     let request = event.request;
     let url = request.url;
+    //console.log(request);
 
     event.respondWith(
-        caches.match(request).then((response) => {
-            if (response) return response;
-            return fetch(request);
-        })
+        caches.match(request)
+            .then((response) => {
+                if (response) return response;
+                return fetch(request);
+            }).catch(error => {
+                console.log('Error while fetching!');
+            })
     );
 });

@@ -31,7 +31,7 @@ class DBHelper {
           if (!db) return;
           let tx = db.transaction('restaurants-json');
           let restaurantsStore = tx.objectStore('restaurants-json');
-          restaurantsStore.get('restaurants-json');
+          return restaurantsStore.get('restaurants-json');
       });
   }
 
@@ -51,22 +51,38 @@ class DBHelper {
   static fetchRestaurants(callback) {
     const idbPromise = DBHelper.initIDB();
 
-    DBHelper.getrestaurantsFromDB(idbPromise).then((restaurants) => {
-        if (restaurants && restaurants.length > 0) {
+    if (navigator.onLine) {
+      console.log(navigator.onLine);
+      fetch(DBHelper.DATABASE_URL)
+        .then(response => response.json())
+        .then(restaurants => {
+          if (!restaurants || restaurants.length === 0) {
+            throw new Error('Restaurants Empty!')
+          }
+
+          console.log('sds');
+          DBHelper.updateRestaurantsInDB(restaurants, idbPromise);
+          console.log('80s');
+          callback(null, restaurants);
+        }).catch(_ => {
+          console.log('abv');
+          DBHelper.getrestaurantsFromDB(idbPromise)
+            .then((resturants) => {
+              if (restaurants && restaurants.length > 0)
+                callback(null, restaurants);
+            });
+        });
+    } else {
+      console.log('yre');
+      DBHelper.getrestaurantsFromDB(idbPromise)
+        .then((restaurants) => {
+          console.log(restaurants)
+          if (restaurants && restaurants.length > 0)
             callback(null, restaurants);
-        } else {
-            return fetch(DBHelper.DATABASE_URL);
-        }
-    }).then(response => {
-        if (!response) return;
-        return response.json();
-    }).then(restaurantsJson => {
-        if (!restaurantsJson) return;
-        DBHelper.updateRestaurantsInDB(restaurantsJson, idbPromise);
-        callback(null, restaurantsJson);
-    }).catch((error) => {
-        callback(error, null);
-    });
+        }).catch(error => {
+            console.log(error);
+        });
+    }
   }
 
   /**
@@ -129,6 +145,7 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
+        console.log('ftsct');
         let results = restaurants
         if (cuisine != 'all') { // filter by cuisine
           results = results.filter(r => r.cuisine_type == cuisine);
