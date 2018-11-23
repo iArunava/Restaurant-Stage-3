@@ -24,16 +24,16 @@ self.addEventListener('install', (event) => {
                 'js/setServiceWorker.js',
                 'js/idb.js',
                 'css/styles.css',
-                'img/1.jpg',
-                'img/2.jpg',
-                'img/3.jpg',
-                'img/4.jpg',
-                'img/5.jpg',
-                'img/6.jpg',
-                'img/7.jpg',
-                'img/8.jpg',
-                'img/9.jpg',
-                'img/10.jpg',
+                'img/1.webp',
+                'img/2.webp',
+                'img/3.webp',
+                'img/4.webp',
+                'img/5.webp',
+                'img/6.webp',
+                'img/7.webp',
+                'img/8.webp',
+                'img/9.webp',
+                'img/10.webp',
                 'icons/diet-128.png',
                 //'https://fonts.gstatic.com/s/quicksand/v7/6xKtdSZaM9iE8KbpRA_hK1QN.woff2',
                 'https://fonts.googleapis.com/css?family=Quicksand:300'
@@ -50,7 +50,13 @@ self.addEventListener('fetch', (event) => {
     let reg = new RegExp('(.*)?=(\\d*)');
     let request = event.request;
     let url = request.url;
-    //console.log(request);
+    if (url.endsWith('.jpg')) {
+        url = url.substring(0, url.length - 3) + 'webp'
+        console.log(url);
+        request = new Request(url);
+    }
+    //request.url = url;
+    console.log(request.url);
 
     event.respondWith(
         caches.match(request)
