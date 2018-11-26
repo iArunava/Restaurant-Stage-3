@@ -6,9 +6,7 @@ let newMap;
  */
 document.addEventListener('DOMContentLoaded', (event) => {
   initMap();
-  if (navigator.onLine) {
-    //DBHelper.updateOfflineReviews(parseInt(document.location.href[document.location.href.length - 1]));
-  }
+  window.addEventListener('online', is_online);
 });
 
 /**
@@ -235,4 +233,9 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+function is_online() {
+  console.log('Now online!');
+  DBHelper.syncWithServer();
 }

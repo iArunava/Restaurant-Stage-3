@@ -3,7 +3,7 @@
  */
 
 
- localStorage.setItem('oreviews', {});
+ let reviews_to_sync = [];
 
  class DBHelper {
   /**
@@ -258,26 +258,9 @@
         .then(reviews => {
           if (!reviews || reviews.length === 0)
             throw new Error('No review found to updated!');
-
-          if (navigator.offline_reviews.length > 0) {
-            console.log('reasds');
-            console.log(navigator.offline_reviews.length);
-            let copy_offline_reviews = navigator.offline_reviews.slice();
-            navigator.offline_reviews = [];
-            console.log(copy_offline_reviews.length);
-
-            for (let i = 0; i < copy_offline_reviews.length; ++i) {
-              reviews.push(copy_offline_reviews[i]);
-              DBHelper.updateReviewsToServer(copy_offline_reviews[i]);
-            }
-
-            return reviews;
-          } else {
-            console.log('reasd23231s');
-            DBHelper.updateReviewsToDb(dbPromise, restaurant_id, reviews);
-            console.log(reviews);
-            return reviews;
-          }
+          DBHelper.updateReviewsToDb(dbPromise, restaurant_id, reviews);
+          console.log(reviews_to_sync);
+          return reviews;
           }).catch( _ => {
             return DBHelper.getReviewsByRestaurant(dbPromise, restaurant_id)
               .then(reviews => {
@@ -320,12 +303,26 @@
         }*/
   }
 
+  static syncWithServer() {
+    console.log(reviews_to_sync);
+    if (!reviews_to_sync.length > 0)
+      return;
+
+    let offline_reviews = reviews_to_sync.slice();
+    reviews_to_sync = [];
+    for (let i = 0; i < offline_reviews.length; ++i) {
+      DBHelper.updateReviewsToServer(offline_reviews[i]);
+    }
+    console.log('complete');
+  }
+
   static putReviewsInDb(review_dict) {
     const dbPromise = DBHelper.initIDB();
     DBHelper.updateOnlineReviews(dbPromise, review_dict.restaurant_id, review_dict);
   }
 
   static updateOfflineReviews(restaurant_id) {
+    console.log('usage of cookies');
     let or = document.cookie.split(';')[0].split('=')[1];
     if (!or) return;
 
@@ -335,35 +332,27 @@
 
   static updateOnlineReviews(dbPromise, id=undefined, review=undefined) {
     if (review !== undefined && review.restaurant_id) id = review.restaurant_id;
-    console.log('updateOnlineReviews', id);
+    console.log('updateOnlineReviews', id, typeof id);
 
-    // Not a single review
-    // Hence all the reviews are can be just updated
-    if (review.length !== undefined && review.length > 0) {
+    DBHelper.getReviewsByRestaurant(dbPromise, id)
+    .then(reviews => {
+      console.log(reviews);
+      if (!reviews) return;
+      if(review) reviews.push(review);
+
+      DBHelper.updateReviewsToDb(dbPromise, id, reviews);
+
       DBHelper.updateReviewsToServer(review);
-    } else {
-      DBHelper.getReviewsByRestaurant(dbPromise, id)
-      .then(reviews => {
-        console.log(reviews);
-        if (!reviews) return;
-        if(review) reviews.push(review);
-
-        DBHelper.updateReviewsToDb(dbPromise, id, reviews);
-
-        DBHelper.updateReviewsToServer(review);
-        }).then(response => {
-          document.cookie = 'or=false';
-        }).catch(error => {
-          console.log(error.toString());
-        })
-    }
-
+      }).then(response => {
+        document.cookie = 'or=false';
+      }).catch(error => {
+        console.log(error.toString());
+      });
   }
 
   static updateReviewsToServer(review) {
     if (!navigator.onLine) {
-      let oreviews = localStorage.getItem('oreviews').json();
-      localStorage.setItem('oreviews', oreviews.push(review));
+      reviews_to_sync.push(review);
       return;
     }
 
