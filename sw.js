@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
                 'js/setServiceWorker.js',
                 'js/idb.js',
                 'css/styles.css',
-                'css/restaurant-details.min.css',
+                'css/restaurant-details.css',
                 'css/home-styles.min.css',
                 'img/1.webp',
                 'img/2.webp',
@@ -37,8 +37,6 @@ self.addEventListener('install', (event) => {
                 'img/9.webp',
                 'img/10.webp',
                 'icons/diet-128.png',
-                //'https://fonts.gstatic.com/s/quicksand/v7/6xKtdSZaM9iE8KbpRA_hK1QN.woff2',
-                'https://fonts.googleapis.com/css?family=Quicksand:300'
             ]);
         }).catch(() => {
             console.log('Error while caching!');
@@ -58,7 +56,7 @@ self.addEventListener('fetch', (event) => {
         request = new Request(url);
     }
     //request.url = url;
-    console.log(request.url);
+    //console.log(request.url);
 
     event.respondWith(
         caches.match(request)

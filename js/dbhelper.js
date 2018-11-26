@@ -2,93 +2,90 @@
  * Common database helper functions.
  */
 
-reviews_to_sync = []
 
-class DBHelper {
+ localStorage.setItem('oreviews', {});
 
+ class DBHelper {
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
-  static get DATABASE_URL() {
+   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
 
   static initIDB() {
-      return idb.open('restaurants-db', 2, (upgradeDb) => {
-          switch (upgradeDb.oldVersion) {
-              case 0:
-                  upgradeDb.createObjectStore('restaurants-json');
-              case 1:
-                  upgradeDb.createObjectStore('reviews-json');
-          }
-      })
+    return idb.open('restaurants-db', 2, (upgradeDb) => {
+      switch (upgradeDb.oldVersion) {
+        case 0:
+        upgradeDb.createObjectStore('restaurants-json');
+        case 1:
+        upgradeDb.createObjectStore('reviews-json');
+      }
+    })
   }
 
   static getrestaurantsFromDB(idbPromise) {
-      return idbPromise.then((db) => {
-          if (!db) return;
-          let tx = db.transaction('restaurants-json');
-          let restaurantsStore = tx.objectStore('restaurants-json');
-          return restaurantsStore.get('restaurants-json');
-      });
+    return idbPromise.then((db) => {
+      if (!db) return;
+      let tx = db.transaction('restaurants-json');
+      let restaurantsStore = tx.objectStore('restaurants-json');
+      return restaurantsStore.get('restaurants-json');
+    });
   }
 
   static updateRestaurantsInDB(restaurants, idbPromise) {
-      return idbPromise.then((db) => {
-          if (!db) return;
-          let tx = db.transaction('restaurants-json', 'readwrite');
-          let restaurantsStore = tx.objectStore('restaurants-json');
-          restaurantsStore.put(restaurants, 'restaurants-json');
-          tx.complete;
-      });
+    return idbPromise.then((db) => {
+      if (!db) return;
+      let tx = db.transaction('restaurants-json', 'readwrite');
+      let restaurantsStore = tx.objectStore('restaurants-json');
+      restaurantsStore.put(restaurants, 'restaurants-json');
+      tx.complete;
+    });
   }
 
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants(callback) {
+   static fetchRestaurants(callback) {
     const idbPromise = DBHelper.initIDB();
 
     if (navigator.onLine) {
-      console.log(navigator.onLine);
       fetch(DBHelper.DATABASE_URL)
-        .then(response => response.json())
-        .then(restaurants => {
-          if (!restaurants || restaurants.length === 0) {
-            throw new Error('Restaurants Empty!')
-          }
+      .then(response => response.json())
+      .then(restaurants => {
+        console.log(restaurants);
+        if (!restaurants || restaurants.length === 0) {
+          throw new Error('Restaurants Empty!')
+        }
 
-          console.log('sds');
-          DBHelper.updateRestaurantsInDB(restaurants, idbPromise);
-          console.log('80s');
-          callback(null, restaurants);
-        }).catch(_ => {
-          console.log('abv');
-          DBHelper.getrestaurantsFromDB(idbPromise)
-            .then((resturants) => {
-              if (restaurants && restaurants.length > 0)
-                callback(null, restaurants);
-            });
-        });
-    } else {
-      console.log('yre');
-      DBHelper.getrestaurantsFromDB(idbPromise)
+        DBHelper.updateRestaurantsInDB(restaurants, idbPromise);
+        callback(null, restaurants);
+      }).catch(error => {
+        console.log(error);
+        DBHelper.getrestaurantsFromDB(idbPromise)
         .then((restaurants) => {
-          console.log(restaurants)
           if (restaurants && restaurants.length > 0)
             callback(null, restaurants);
-        }).catch(error => {
-            console.log(error);
         });
+      });
+    } else {
+      DBHelper.getrestaurantsFromDB(idbPromise)
+      .then((restaurants) => {
+        console.log(restaurants)
+        if (restaurants && restaurants.length > 0)
+          callback(null, restaurants);
+      }).catch(error => {
+        console.log(error);
+      });
     }
   }
 
   /**
    * Fetch a restaurant by its ID.
    */
-  static fetchRestaurantById(id, callback) {
+   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -107,7 +104,7 @@ class DBHelper {
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
-  static fetchRestaurantByCuisine(cuisine, callback) {
+   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -123,7 +120,7 @@ class DBHelper {
   /**
    * Fetch restaurants by a neighborhood with proper error handling.
    */
-  static fetchRestaurantByNeighborhood(neighborhood, callback) {
+   static fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -139,7 +136,7 @@ class DBHelper {
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
-  static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
+   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -161,7 +158,7 @@ class DBHelper {
   /**
    * Fetch all neighborhoods with proper error handling.
    */
-  static fetchNeighborhoods(callback) {
+   static fetchNeighborhoods(callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -179,7 +176,7 @@ class DBHelper {
   /**
    * Fetch all cuisines with proper error handling.
    */
-  static fetchCuisines(callback) {
+   static fetchCuisines(callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -197,14 +194,14 @@ class DBHelper {
   /**
    * Restaurant page URL.
    */
-  static urlForRestaurant(restaurant) {
+   static urlForRestaurant(restaurant) {
     return (`./restaurant.html?id=${restaurant.id}`);
   }
 
   /**
    * Restaurant image URL.
    */
-  static imageUrlForRestaurant(restaurant) {
+   static imageUrlForRestaurant(restaurant) {
     let photo_name = restaurant.photograph;
     if (photo_name === undefined) photo_name = "10";
     return (`/img/${photo_name}.webp`);
@@ -217,10 +214,10 @@ class DBHelper {
     // https://leafletjs.com/reference-1.3.0.html#marker
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
       {title: restaurant.name,
-      alt: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant)
+        alt: restaurant.name,
+        url: DBHelper.urlForRestaurant(restaurant)
       })
-      marker.addTo(map);
+    marker.addTo(map);
     return marker;
   }
 
@@ -234,7 +231,7 @@ class DBHelper {
       let reviewStore = tx.objectStore('reviews-json');
       return reviewStore.get(restaurant_id);
     });
-   }
+  }
 
   /**
    * Update reviews to db
@@ -249,9 +246,9 @@ class DBHelper {
       tx.complete;
       console.log('updated!');
     });
-   }
+  }
 
-   static fetchReviewsByRestaurantId(restaurant_id) {
+  static fetchReviewsByRestaurantId(restaurant_id) {
     const review_url = `http://localhost:1337/reviews/?restaurant_id=${restaurant_id}`;
     const dbPromise = DBHelper.initIDB();
 
@@ -262,8 +259,50 @@ class DBHelper {
           if (!reviews || reviews.length === 0)
             throw new Error('No review found to updated!');
 
-          console.log(restaurant_id); console.log(reviews);
+          if (navigator.offline_reviews.length > 0) {
+            console.log('reasds');
+            console.log(navigator.offline_reviews.length);
+            let copy_offline_reviews = navigator.offline_reviews.slice();
+            navigator.offline_reviews = [];
+            console.log(copy_offline_reviews.length);
+
+            for (let i = 0; i < copy_offline_reviews.length; ++i) {
+              reviews.push(copy_offline_reviews[i]);
+              DBHelper.updateReviewsToServer(copy_offline_reviews[i]);
+            }
+
+            return reviews;
+          } else {
+            console.log('reasd23231s');
+            DBHelper.updateReviewsToDb(dbPromise, restaurant_id, reviews);
+            console.log(reviews);
+            return reviews;
+          }
+          }).catch( _ => {
+            return DBHelper.getReviewsByRestaurant(dbPromise, restaurant_id)
+              .then(reviews => {
+                if (reviews && reviews.length > 0)
+                  return reviews;
+              })
+          });
+        } else {
+          return DBHelper.getReviewsByRestaurant(dbPromise, restaurant_id)
+            .then(reviews => {
+              if (reviews && reviews.length > 0)
+                return reviews;
+            });
+        }
+
+    /*
+    if (navigator.onLine) {
+      return fetch(review_url)
+        .then(response => response.json())
+        .then(reviews => {
+          if (!reviews || reviews.length === 0)
+            throw new Error('No review found to updated!');
+
           DBHelper.updateReviewsToDb(dbPromise, restaurant_id, reviews);
+          console.log(reviews);
           return reviews;
           }).catch( _ => {
             return DBHelper.getReviewsByRestaurant(dbPromise, restaurant_id)
@@ -278,36 +317,65 @@ class DBHelper {
               if (reviews && reviews.length > 0)
                 return reviews;
             });
-        }
+        }*/
   }
 
-    static putReviewsInDb(review_dict) {
-      const dbPromise = DBHelper.initIDB();
+  static putReviewsInDb(review_dict) {
+    const dbPromise = DBHelper.initIDB();
+    DBHelper.updateOnlineReviews(dbPromise, review_dict.restaurant_id, review_dict);
+  }
 
-      console.log(review_dict.restaurant_id);
-      console.log(typeof review_dict.restaurant_id);
-      DBHelper.getReviewsByRestaurant(dbPromise, review_dict.restaurant_id)
+  static updateOfflineReviews(restaurant_id) {
+    let or = document.cookie.split(';')[0].split('=')[1];
+    if (!or) return;
+
+    const dbPromise = DBHelper.initIDB();
+    DBHelper.updateOnlineReviews(dbPromise, restaurant_id);
+  }
+
+  static updateOnlineReviews(dbPromise, id=undefined, review=undefined) {
+    if (review !== undefined && review.restaurant_id) id = review.restaurant_id;
+    console.log('updateOnlineReviews', id);
+
+    // Not a single review
+    // Hence all the reviews are can be just updated
+    if (review.length !== undefined && review.length > 0) {
+      DBHelper.updateReviewsToServer(review);
+    } else {
+      DBHelper.getReviewsByRestaurant(dbPromise, id)
       .then(reviews => {
+        console.log(reviews);
         if (!reviews) return;
-        reviews.push(reviews);
-        DBHelper.updateReviewsToDb(dbPromise, review_dict.restaurant_id, review_dict)
+        if(review) reviews.push(review);
 
-        if (navigator.onLine) {
-          const review_url = 'http://localhost:1337/reviews';
+        DBHelper.updateReviewsToDb(dbPromise, id, reviews);
 
-          console.log('putReviewsInDb2');
-          return fetch(review_url, {
-            method: 'POST',
-            body: JSON.stringify(review_dict),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-        } else {
-          reviews_to_sync.push(review_dict)
-        }
-      }).catch(error => {
-        console.log(error);
-      })
+        DBHelper.updateReviewsToServer(review);
+        }).then(response => {
+          document.cookie = 'or=false';
+        }).catch(error => {
+          console.log(error.toString());
+        })
     }
+
+  }
+
+  static updateReviewsToServer(review) {
+    if (!navigator.onLine) {
+      let oreviews = localStorage.getItem('oreviews').json();
+      localStorage.setItem('oreviews', oreviews.push(review));
+      return;
+    }
+
+    let review_url = `http://localhost:1337/reviews`;
+
+    console.log('putReviewsInDb2');
+    return fetch('http://localhost:1337/reviews', {
+      method: 'POST',
+      body: JSON.stringify(review),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
 }

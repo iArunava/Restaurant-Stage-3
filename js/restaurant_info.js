@@ -6,6 +6,9 @@ let newMap;
  */
 document.addEventListener('DOMContentLoaded', (event) => {
   initMap();
+  if (navigator.onLine) {
+    //DBHelper.updateOfflineReviews(parseInt(document.location.href[document.location.href.length - 1]));
+  }
 });
 
 /**
@@ -145,6 +148,7 @@ fillReviewsHTML = (id) => {
 
     DBHelper.fetchReviewsByRestaurantId(id)
       .then(reviews => {
+        console.log('11111111111', reviews);
         if (!reviews || reviews.length == 0) {
           const noReviews = document.createElement('p');
           container.appendChild(noReviews);

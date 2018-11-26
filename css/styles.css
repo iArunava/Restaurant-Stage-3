@@ -1,7 +1,6 @@
 /* CSS Document */
-@import url("https://fonts.googleapis.com/css?family=Quicksand");
 * {
-  font-family: 'Quicksand', monospace;
+  font-family: monospace;
   font-size: 20px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
