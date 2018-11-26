@@ -21,6 +21,14 @@ a:hover, a:visited {
   color: #fcfcfc33;
   max-width: 95%; }
 
+.star--clicked {
+  color: #FFB74D;
+}
+
+.star--not-clicked {
+  color: #777;
+}
+
 /* ----------- */
 ul, li {
   color: #333;

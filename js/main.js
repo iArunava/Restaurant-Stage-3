@@ -12,9 +12,23 @@ var isFirefox = typeof InstallTrigger !== 'undefined';
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-    initMap(); // added
+    initMap(_ => {
+      let stars = document.getElementsByClassName('fa-star');
+      console.log(stars, stars.length);
+      console.log(stars[0]);
+      for(let i = 0; i < stars.length; ++i) {
+        stars[i].addEventListener('click', fav_triggered, false);
+        console.log(stars[i]);
+      }
+    }); // added
     fetchNeighborhoods();
     fetchCuisines();
+
+    /*
+    Array.from(stars).forEach((element) => {
+      console.log(element);
+    });
+    */
 });
 
 /**
@@ -75,7 +89,7 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 /**
  * Initialize leaflet map, called from HTML.
  */
-initMap = () => {
+initMap = (callback) => {
   self.newMap = L.map('id--map', {
         center: [40.722216, -73.987501],
         zoom: 12,
@@ -91,6 +105,8 @@ initMap = () => {
   }).addTo(newMap);
 
   updateRestaurants();
+  console.log('asa');
+  callback();
 }
 
 /**
@@ -144,13 +160,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
-function fav_triggered(event) {
-    let star_btn;
-    if (isFirefox)
-      star_btn = document.getElementById(event.explicitOriginalTarget.id);
-    else
-      star_btn = document.getElementById(event.path[0].id);
-
+function fav_triggered(star_btn) {
     if (star_btn.classList.contains('star--not-clicked')) {
       star_btn.classList.remove('star--not-clicked');
       star_btn.classList.add('star--clicked');
@@ -189,7 +199,10 @@ createRestaurantHTML = (restaurant) => {
     fav_icon.classList.add('fa-star');
     fav_icon.classList.add('star--not-clicked');
     fav_icon.setAttribute('id', 'id--star-'+restaurant.id.toString());
-    fav_icon.onclick = fav_triggered;
+    fav_icon.addEventListener('click', _ => {
+      let star_btn = document.getElementById('id--star-' + restaurant.id.toString());
+      fav_triggered(star_btn);
+    });
     li.append(fav_icon);
 
 
