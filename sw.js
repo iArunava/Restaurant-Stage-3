@@ -24,6 +24,8 @@ self.addEventListener('install', (event) => {
                 'js/setServiceWorker.js',
                 'js/idb.js',
                 'css/styles.css',
+                'css/restaurant-details.min.css',
+                'css/home-styles.min.css',
                 'img/1.webp',
                 'img/2.webp',
                 'img/3.webp',
