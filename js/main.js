@@ -12,23 +12,9 @@ var isFirefox = typeof InstallTrigger !== 'undefined';
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-    initMap(_ => {
-      let stars = document.getElementsByClassName('fa-star');
-      console.log(stars, stars.length);
-      console.log(stars[0]);
-      for(let i = 0; i < stars.length; ++i) {
-        stars[i].addEventListener('click', fav_triggered, false);
-        console.log(stars[i]);
-      }
-    }); // added
+    initMap(); // added
     fetchNeighborhoods();
     fetchCuisines();
-
-    /*
-    Array.from(stars).forEach((element) => {
-      console.log(element);
-    });
-    */
 });
 
 /**
@@ -105,8 +91,6 @@ initMap = (callback) => {
   }).addTo(newMap);
 
   updateRestaurants();
-  console.log('asa');
-  callback();
 }
 
 /**
